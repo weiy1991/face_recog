@@ -7,6 +7,7 @@ This is a temporary script file.
 import face_recognition
 import cv2
 import csv
+import numpy as np
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -21,7 +22,11 @@ import csv
 video_capture = cv2.VideoCapture(0)
 
 # Load a sample picture and learn how to recognize it.
-obama_image = face_recognition.load_image_file(".\dataset\\Jason\\1.jpg")
+#for windows
+#obama_image = face_recognition.load_image_file(".\dataset\\Jason\\1.jpg")
+
+#for linuxe
+obama_image = face_recognition.load_image_file("./dataset/dahang/1.jpg")
 
 obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
 print(obama_face_encoding)
@@ -43,6 +48,14 @@ with open(log_path, 'r') as csvFile:
             pic_encoding.append(face_encoding_image[0])
             facename.append(item[1])
             print( item[0]+"encoding successfully!")
+
+            # check the encoding of the image
+            locationimg = face_recognition.face_locations(face_image)  # top right bottom left
+            print(item[0],locationimg)
+            cv2.rectangle(face_image,(locationimg[0][0],locationimg[0][1]),(locationimg[0][2],locationimg[0][3]),(255,0,0),5)
+            small_face_image = cv2.resize(face_image, (0, 0), fx=0.25, fy=0.25)
+            cv2.imshow(item[0], small_face_image)
+            #cv2.waitKey(0)            
         else:
             print( item[0]+"has no encoding!")
     csvFile.close()
@@ -75,16 +88,25 @@ while True:
             #match = face_recognition.compare_faces([obama_face_encoding], face_encoding)
             #print("match:",match)
             #for p_pic_encoding in pic_encoding:
-            match = face_recognition.compare_faces(pic_encoding, face_encoding, 0.45)
+            #match = face_recognition.compare_faces(pic_encoding, face_encoding, 0.45)
+            matcheuli = face_recognition.face_distance(pic_encoding, face_encoding)
+            minid = np.argmin(matcheuli)
+            minvalue = matcheuli.min()
+
             name = "Unknown"
-            print("match:",match)
-            for i in range(len(match)):
-                if match[i]:
-                    name = facename[i]
-                    break
+            if matcheuli.min() < 0.4:
+                name = facename[minid]
+            
+            print("matcheuli:", matcheuli, type(matcheuli),matcheuli.min(), np.argmin(matcheuli))
+            #print("match:",match)
+            # for i in range(len(match)):
+            #     if match[i]:
+            #         name = facename[i]
+            #         break
                     
 #                if match[0]:
 #                    name = "jason"
+
             face_names.append(name)
 
     process_this_frame = not process_this_frame
