@@ -44,7 +44,7 @@ with open(log_path, 'r') as csvFile:
             # check the encoding of the image
             locationimg = face_recognition.face_locations(face_image)  # top right bottom left
             print(item[0],locationimg)
-            cv2.rectangle(face_image,(locationimg[0][0],locationimg[0][1]),(locationimg[0][2],locationimg[0][3]),(255,0,0),5)
+            cv2.rectangle(face_image,(locationimg[0][3],locationimg[0][0]),(locationimg[0][1],locationimg[0][2]),(255,0,0),5)
             small_face_image = cv2.resize(face_image, (0, 0), fx=0.25, fy=0.25)
             cv2.imshow(item[0], small_face_image)
             #cv2.waitKey(0)            
