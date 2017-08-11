@@ -10,6 +10,7 @@ import csv
 import numpy as np
 from datetime import datetime
 import os,sys
+import math
 
 encoding_path = "face_encoding.csv"
 testing_path = "testing.csv"
@@ -72,6 +73,10 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
+#location_now = None
+location_formers = []
+name_formers = []
+
 # for single_img_path in pic_testing_path:
 #     # Grab a single frame from testing images
 #     frame = cv2.imread(single_img_path,1)
@@ -99,7 +104,7 @@ for single_img_path in pic_testing_path:
 
         face_names = []
         name = "Unknown"
-        for face_encoding in face_encodings:
+        for face_encoding, face_location in zip(face_encodings, face_locations):
             # See if the face is a match for the known face(s)
             #match = face_recognition.compare_faces([obama_face_encoding], face_encoding)
             #print("match:",match)
@@ -111,11 +116,26 @@ for single_img_path in pic_testing_path:
             minvalueglobal = minvalue
             nameglobal = facename[minid]
 
+            location_now = face_location
+            print(location_now)
+
             name = "Unknown"
             if matcheuli.min() < 0.45:
                 name = facename[minid]
-            
-            print("matcheuli:", matcheuli, type(matcheuli),matcheuli.min(), np.argmin(matcheuli))
+            else:
+                #cal the location of the center point
+                x_now = (location_now[3]*1.0 + location_now[1]*1.0) / 2 
+                y_now = (location_now[0]*1.0 + location_now[2]*1.0) / 2
+
+                for location_former, name_former in zip(location_formers, name_formers):
+                    x_former = (location_former[3]*1.0 + location_former[1]*1.0) / 2 
+                    y_former = (location_former[0]*1.0 + location_former[2]*1.0) / 2
+                    distance_now_former = math.sqrt(math.pow((x_now - x_former), 2) + math.pow((y_now - y_former), 2))    
+                    print("distance_now_former:", distance_now_former)             
+                    if distance_now_former<20:
+                        name = name_former
+
+            #print("matcheuli:", matcheuli, type(matcheuli),matcheuli.min(), np.argmin(matcheuli))
             #print("match:",match)
             # for i in range(len(match)):
             #     if match[i]:
@@ -126,6 +146,8 @@ for single_img_path in pic_testing_path:
 #                    name = "jason"
 
             face_names.append(name)
+            name_formers = face_names
+            location_formers = face_locations
 
     process_this_frame = not process_this_frame
 
