@@ -9,25 +9,26 @@ import cv2
 import csv
 import numpy as np
 from datetime import datetime
+import os,sys
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
-
-# Load a sample picture and learn how to recognize it.
-#for windows
-#obama_image = face_recognition.load_image_file(".\dataset\\Jason\\1.jpg")
-
-#for linuxe
-obama_image = face_recognition.load_image_file("./dataset/dahang/1.jpg")
-
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
-print(obama_face_encoding)
 
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+frame_count = 0
+
+#get the name of the person
+#print(sys.argv[:])
+name_person = sys.argv[1]
+#print(name_person)
+#create the new folder path
+img_person_path = "./dataset/"+name_person
+if not os.path.isdir(img_person_path):
+    os.mkdir(img_person_path) 
 
 while True:
 
@@ -35,7 +36,7 @@ while True:
 
     # Grab a single frame of video
     ret, frame = video_capture.read()
-
+    copyframe = frame.copy()
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -46,7 +47,7 @@ while True:
         locationimg = face_recognition.face_locations(frame)  # top right bottom left  171, 468, 439, 200
 
         if locationimg:
-            copyframe = frame.copy();  
+            copyframe = frame.copy()
             print("detect location:",locationimg)
             cv2.rectangle(frame,(locationimg[0][3],locationimg[0][0]),(locationimg[0][1],locationimg[0][2]),(255,0,0),5)
             
@@ -57,6 +58,10 @@ while True:
         cv2.imshow('Video', frame)
 
     process_this_frame = not process_this_frame
+
+    #write the frame images
+    cv2.imwrite(img_person_path+"/"+str(frame_count)+".jpg", copyframe)
+    frame_count+=1
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
