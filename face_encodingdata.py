@@ -8,7 +8,7 @@ Created on Tue Aug  8 16:30:53 2017
 """
 
 import csv
-import os
+import os,sys
 
 #set the dataset path, relatively.
 rootDir = "./dataset"
@@ -27,6 +27,7 @@ def writedata(lines,log_path):
 def getFile(rootDir): 
     dirnamepath = []
     dirpicpath = []
+    allpath = []
     #get the personal name file path
     dirname = os.listdir(rootDir)
     for listname in dirname: 
@@ -36,15 +37,28 @@ def getFile(rootDir):
     for listpic in dirnamepath: 
         if os.path.isdir(listpic): #check if it is a folder 
             for listpicname in os.listdir(listpic): 
+                #print(listpicname)
                 dirpicpath.append(os.path.join(listpic, listpicname))
+            dirpicpath.sort(key= lambda x:int((x.split('/')[-1])[:-4]))
+            # print(dirpicpath)
+            # input("pause")
+            allpath += dirpicpath
+            dirpicpath.clear()
     #return all the pic path
-    return dirpicpath
+    return allpath
 
 def genFaceCSV(csvName):
     picpath = getFile(rootDir)
+    #picpath.sort(key = line.split('/')[-1] )
+    #picpath.sort(key= lambda x:int((x.split('/')[-1])[:-4]))
     writedata(picpath,csvName)
     
 if __name__ == "__main__":
+    if len(sys.argv)==3:
+        rootDir = "./"+sys.argv[1]
+        csvName = sys.argv[2] + ".csv"
+        print(rootDir, csvName)
+
     genFaceCSV(csvName)
     
 
