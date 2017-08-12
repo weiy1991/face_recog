@@ -76,14 +76,14 @@ process_this_frame = True
 #location_now = None
 location_formers = []
 name_formers = []
+score_face_recog = []
 
 # for single_img_path in pic_testing_path:
 #     # Grab a single frame from testing images
 #     frame = cv2.imread(single_img_path,1)
 #     cv2.waitKey(0)
 
-
-for single_img_path in pic_testing_path:
+for single_img_path, single_name in zip(pic_testing_path, name_testing):
     time_start = datetime.now()  #get the start time
 
     # Grab a single frame from testing images
@@ -168,6 +168,12 @@ for single_img_path in pic_testing_path:
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
+        #calculate the score of the recognition
+        if name == single_name:
+            score_face_recog.append(1)
+        else:
+            score_face_recog.append(0)
+
     # Display the resulting image
     font = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(frame,str(minvalueglobal)+"   "+nameglobal,(50,50), font, 1.0,(255,255,255),2,cv2.LINE_AA)
@@ -181,6 +187,10 @@ for single_img_path in pic_testing_path:
 
     time_cost = time_end - time_start
     print("time cost for detection:", (time_cost.microseconds / 1000.0) )
+
+#caculate the score of the recognition
+score = 100*(sum(score_face_recog) * 1.0 / len(score_face_recog))
+print("final score: %f %" % score)
 
 # Release handle to the webcam
 cv2.destroyAllWindows()
