@@ -13,6 +13,8 @@ import math
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
+cv2.namedWindow("face_recognition", flags=0);
+cv2.setWindowProperty("face_recognition", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);  
 
 # Load a sample picture and learn how to recognize it.
 #for windows
@@ -147,7 +149,8 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    cv2.imshow('face_recognition', frame)
+    
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
