@@ -17,11 +17,16 @@ csvName = "face_encoding.csv"
 def writedata(lines,log_path):
     if os.path.isfile(log_path):
         os.remove(log_path)
+    ID_count = 0
+    line_name_former = ''
     for line in lines:
         linename = line.split('/')[-2] #get the name of the pic
+        if linename!=line_name_former:
+            ID_count += 1
+            line_name_former = linename
         with open(log_path, 'a', newline='') as csvFile:
             writer = csv.writer(csvFile)
-            writer.writerow([line,linename])
+            writer.writerow([line,linename,ID_count])
             csvFile.close()
 
 def getFile(rootDir): 
