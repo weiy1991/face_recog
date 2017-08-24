@@ -25,6 +25,7 @@ client.connect((host, port))
 ######################################
 
 # Get a reference to webcam #0 (the default one)
+background = cv2.imread("./voice/adver.png",1) 
 video_capture = cv2.VideoCapture(0)
 cv2.namedWindow("face_recognition", flags=0);
 cv2.setWindowProperty("face_recognition", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);  
@@ -196,7 +197,11 @@ while True:
         cv2.imwrite("./log/"+str(frame_count)+".jpg", frame)
 
     # Display the resulting image
-    cv2.imshow('face_recognition', frame)
+
+    show_frame = cv2.resize(frame, (0, 0), fx=0.85, fy=0.85)
+    background[384-int(np.shape(show_frame)[0]/2) +30: 384+int(np.shape(show_frame)[0]/2) + 30, 683-int(np.shape(show_frame)[1]/2): 683+int(np.shape(show_frame)[1]/2)] = show_frame
+    cv2.imshow('face_recognition', background)
+    #cv2.imshow('face_recognition', frame)
 
     
     

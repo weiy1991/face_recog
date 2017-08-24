@@ -24,6 +24,14 @@ client.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) #在客户端开启
 client.connect((host, port))
 ######################################
 
+############background##############
+background = cv2.imread("./voice/adver.png",1) 
+print(np.shape(background))
+#shape: 768, 1366, 3
+cv2.namedWindow("face_recognition", flags=0);
+cv2.setWindowProperty("face_recognition", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);  
+###################################
+
 #write data
 def writedata(lines,log_path):
     if os.path.isfile(log_path):
@@ -248,6 +256,14 @@ for threshold_tolerance in np.arange(0.40, 0.401, 0.001):
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(frame,str(minvalueglobal)+"   "+nameglobal,(50,50), font, 1.0,(255,255,255),2,cv2.LINE_AA)
         cv2.imshow('Video', frame)
+        show_frame = cv2.resize(frame, (0, 0), fx=0.85, fy=0.85)
+        background[384-int(np.shape(show_frame)[0]/2) +30: 384+int(np.shape(show_frame)[0]/2) + 30, 683-int(np.shape(show_frame)[1]/2): 683+int(np.shape(show_frame)[1]/2)] = show_frame
+        cv2.imshow('face_recognition', background)
+
+        # imageROI=background(cv2.Rect(0,0,100,100));   #获取感兴趣区域，即logo要放置的区域 
+        # roi = img[row:row+height,column:column+width]
+
+        #addWeighted(imageROI,0.8,logo,0.6,0,imageROI);     //图像叠加 
 
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
